@@ -56,7 +56,7 @@ function redraw_panel() {
   }
 }
 
-if (debug) console.log('YouTube large notification test')
+if (DEBUG) console.log('YouTube large notification test')
 
 var id_plate = 'yt-masthead-notifications-clickcard'
 var elem_plate = document.getElementById(id_plate)
