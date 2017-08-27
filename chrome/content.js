@@ -58,9 +58,24 @@ function redraw_panel_old() {
 }
 
 function redraw_panel_new() {
-  var html = document.documentElement
-  var height_html = html.clientHeight
-  if (DEBUG) console.log('Document height:', height_html)
+  var elem_plate = document.getElementsByTagName(tag_plate)[0]
+  if (!elem_plate) {
+    console.log('Seems notification is not opened. Skip')
+    return
+  }
+  console.log('Notification detected')
+  var maxheight_panel_orig = remove_px(elem_plate.style.maxHeight)
+  if (DEBUG) console.log('max-height of plate:', maxheight_panel_orig)
+
+  var elem_panel = elem_plate.parentElement.parentElement
+  var top_panel = elem_panel.getBoundingClientRect().top
+  var bottom_panel = top_panel
+
+  var maxheight_panel_new = height_html() - top_panel - bottom_panel
+  if (DEBUG) console.log('max-height will of plate will be adjusted to:', maxheight_panel_new)
+
+  elem_plate.setAttribute('style', 'max-height:' + maxheight_panel_new + 'px;'
+                                 + 'height:' + maxheight_panel_new + 'px;')
 }
 
 function init_extension() {
@@ -71,7 +86,8 @@ function init_extension() {
   console.log('User is using new design?:', new_design)
 
   if (new_design) {
-    redraw_panel_new()
+    var elem_container = document.getElementsByTagName(tag_container)[0]
+    elem_container.addEventListener('DOMSubtreeModified', redraw_panel_new)
     window.addEventListener('resize', redraw_panel_new)
   } else {
     redraw_panel_old()
