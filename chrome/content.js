@@ -1,5 +1,19 @@
 var DEBUG = false
 
+/*
+ * New design
+ */
+var tag_plate = 'ytd-multi-page-menu-renderer'
+/*
+ * Old design
+ */
+var id_plate = 'yt-masthead-notifications-clickcard'
+var id_content = 'yt-masthead-notifications-content'
+
+var maxheight_panel_default
+
+var new_design
+
 function remove_px(str) {
   return Number(str.slice(0, str.length - 2))
 }
@@ -9,7 +23,6 @@ function redraw_panel() {
   var height_html = html.clientHeight
   if (DEBUG) console.log('Document height:', height_html)
 
-  var id_plate = 'yt-masthead-notifications-clickcard'
   var elem_plate = document.getElementById(id_plate)
   var style_plate = window.getComputedStyle(elem_plate)
   var maxheight_panel_orig = remove_px(style_plate.getPropertyValue('max-height'))
@@ -18,26 +31,12 @@ function redraw_panel() {
   /*
    * ID of panle is yt-uix-clickcard-cardXXX, where XXX varies
    * But it is also parent of parent of parent of elem_plate
-   * FIXME: not working well
    */
-  // var elem_panel = elem_plate.parentElement.parentElement.parentElement
-  // var style_panel = window.getComputedStyle(elem_panel)
-  // var top_panel = style_panel.getPropertyValue('top')
-  var top_panel = 50
+  var elem_panel = elem_plate.parentElement.parentElement.parentElement
+  var top_panel = elem_panel.getBoundingClientRect().top
   if (DEBUG) console.log('Top position of panel:', top_panel)
-  if (DEBUG) console.warn('The value of top position of panel is currently hard-coded')
   var bottom_panel = top_panel
 
-  /*
-   * Since we are using dh, we don't need it
-   */
-  // var elem_title = document.getElementById('yt-masthead-notifications-header')
-  // var style_title = window.getComputedStyle(elem_title)
-  // var padtop_title = remove_px(style_title.getPropertyValue('padding-top'))
-  // var height_title = remove_px(style_title.getPropertyValue('height'))
-  // var padbottom_title = remove_px(style_title.getPropertyValue('padding-bottom'))
-
-  var id_content = 'yt-masthead-notifications-content'
   var elem_content = document.getElementById(id_content)
   var style_content = window.getComputedStyle(elem_content)
   var height_content_orig = remove_px(style_content.getPropertyValue('height'))
@@ -56,14 +55,17 @@ function redraw_panel() {
   }
 }
 
-if (DEBUG) console.log('YouTube large notification test')
+function init_extension() {
+  if (DEBUG) console.log('YouTube large notification test')
 
-var id_plate = 'yt-masthead-notifications-clickcard'
-var elem_plate = document.getElementById(id_plate)
-var style_plate = window.getComputedStyle(elem_plate)
-var maxheight_panel_default = remove_px(style_plate.getPropertyValue('max-height'))
-if (DEBUG) console.log('max-height of plate:', maxheight_panel_default)
+  var id_plate = 'yt-masthead-notifications-clickcard'
+  var elem_plate = document.getElementById(id_plate)
+  var style_plate = window.getComputedStyle(elem_plate)
+  maxheight_panel_default = remove_px(style_plate.getPropertyValue('max-height'))
+  if (DEBUG) console.log('max-height of plate:', maxheight_panel_default)
 
-redraw_panel()
-window.addEventListener('load', redraw_panel)
-window.addEventListener('resize', redraw_panel)
+  redraw_panel()
+  window.addEventListener('resize', redraw_panel)
+}
+
+init_extension()
